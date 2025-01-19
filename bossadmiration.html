@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        /* 背景 */      
+        .background {
+            background-image: url('background.jpg'); /* 替换为你的背景图片路径 */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 背景遮罩，调暗背景 */
+        .background::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* 增加透明黑色遮罩 */
+            z-index: 1;
+        }
+
+        /* 图片展示容器 */
+        .image-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2; /* 确保在背景之上 */
+            width: 80%; /* 调整宽度 */
+            max-width: 1200px; /* 最大宽度 */
+            justify-content: center;
+            position: relative;
+        }
+
+        .arrow {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ffd700; /* 暗金色 */
+            border: none;
+            font-size: 3rem;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .arrow:hover {
+            background-color: #c69c6d; /* 暗金色的高亮效果 */
+            transform: scale(1.1);
+        }
+
+        .left-arrow {
+            margin-right: 30px;
+        }
+
+        .right-arrow {
+            margin-left: 30px;
+        }
+
+        .image-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px; /* 图片之间的间隙 */
+            width: 100%;
+            position: relative;
+        }
+
+        .image {
+            width: 350px;
+            height: 250px;
+            object-fit: cover;
+            display: none;
+            transition: opacity 0.5s ease-in-out;
+            border-radius: 10px; /* 圆角 */
+            opacity: 0; /* 隐藏图片 */
+        }
+
+        .image.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* 弹出框 */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* 使弹出框居中 */
+            width: 80%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.8); /* 背景为深黑 */
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .popup img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .popup p {
+            font-size: 2rem; /* 字体放大 */
+            color: #ffd700; /* 暗金色文字 */
+            margin-top: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+/* 返回按钮样式 */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffd700; /* 暗金色 */
+    font-size: 2rem;
+    padding: 15px 25px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 20; /* 确保返回按钮在最上层 */
+}
+
+.background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 增加透明黑色遮罩 */
+    z-index: 1; /* 背景遮罩的 z-index 设置为 1 */
+}
+
+.image-container {
+    position: relative;
+    z-index: 10; /* 图片展示容器的 z-index 设置为 10 */
+}
+
+        .back-button:hover {
+            background-color: #c69c6d; /* 暗金色的高亮效果 */
+            transform: scale(1.1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 背景容器 -->
+    <div class="background">
+        <!-- 返回按钮 -->
+        <button class="back-button">返回</button>
+
+        <!-- 图片展示容器 -->
+        <div class="image-container">
+            <button class="arrow left-arrow">&#8592;</button>
+            <div class="image-display">
+                <img src="1.png" alt="图片1" class="image" id="img-1" data-description="“接肢”葛瑞克">
+                <img src="2.png" alt="图片2" class="image" id="img-2" data-description="“碎星”拉塔恩">
+                <img src="3.png" alt="图片3" class="image" id="img-3" data-description="“米凯拉的锋刃”玛莲妮亚">
+                <img src="4.png" alt="图片4" class="image" id="img-4" data-description="艾尔登之兽">
+                <img src="5.png" alt="图片5" class="image" id="img-5" data-description="“恶兆王”蒙葛特">
+                <img src="6.png" alt="图片6" class="image" id="img-6" data-description="“鲜血君王”蒙格">
+                <img src="7.png" alt="图片7" class="image" id="img-7" data-description="“亵渎君王”拉卡德">
+                <img src="8.png" alt="图片8" class="image" id="img-8" data-description="“满月女王”蕾娜菈">
+            </div>
+            <button class="arrow right-arrow">&#8594;</button>
+        </div>
+    </div>
+
+    <!-- 弹出框 -->
+    <div id="popup" class="popup">
+        <img id="popup-img" src="" alt="弹出图片">
+        <p id="popup-text">图片描述</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let currentImageIndex = 0;
+            const images = $('.image');
+            const totalImages = images.length;
+
+            // 显示初始图片
+            $(images[0]).addClass('active');
+
+            // 左箭头点击事件
+            $('.left-arrow').click(function() {
+                currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+                updateImageDisplay();
+            });
+
+            // 右箭头点击事件
+            $('.right-arrow').click(function() {
+                currentImageIndex = (currentImageIndex + 1) % totalImages;
+                updateImageDisplay();
+            });
+
+            // 更新图片显示
+            function updateImageDisplay() {
+                images.removeClass('active');
+                $(images[currentImageIndex]).addClass('active');
+            }
+
+            // 点击图片弹出框
+            images.click(function() {
+                const src = $(this).attr('src');
+                const description = $(this).data('description'); // 获取每个图片的描述
+                $('#popup-img').attr('src', src);
+                $('#popup-text').text(description); // 设置弹出框中的描述文字
+                $('#popup').fadeIn();
+            });
+
+            // 点击弹出框关闭
+            $('#popup').click(function() {
+                $(this).fadeOut();
+            });
+
+            // 返回按钮点击事件
+            $(".back-button").click(function() {
+                console.log("返回按钮被点击了");
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
